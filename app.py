@@ -10,6 +10,7 @@ from callbacks.dashboard_callbacks import register_dashboard_callbacks
 from components.navbar import navbar
 from components.sidebar import sidebar
 
+
 # Initialize the Dash app
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
