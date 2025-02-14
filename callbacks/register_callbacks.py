@@ -4,14 +4,40 @@ from database import supabase
 def register_register_callbacks(app):
     @app.callback(
     Output('register-message', 'children'),
+    Output('redirect-to-login', 'pathname'),  # Add this output for redirect
     Input('register-button', 'n_clicks'),
     State('register-username', 'value'),
-    State('register-password', 'value')
+    State('register-password', 'value'),
+    #State('url', 'pathname'),
+    allow_duplicates = True
     )
     def handle_registration(n_clicks, username, password):
         if n_clicks > 0:
-            if username and password:  
-                return html.Div("Registration successful! You can now login.", style={"color": "green"})
+            if username and password: 
+                # checks if usename is already registerd in database
+                response = supabase.table("test_user").select("username").eq("username", username).execute()
+                if response.data:
+                    print("user already exists")
+                    return html.Div("Username already exists. Please choose another one.", style={"color": "red"}), None
+
+                try:
+                    insert_response = supabase.table("test_user").insert({"username": username, "password": password}).execute()
+                    # Check if insertion was successful
+                    if insert_response.status_code == 201:  # 201 is for successful creation
+                        print("Supabase response data:", insert_response.data)
+                        # Redirect to login page after successful registration
+                        return html.Div("Registration successful! You can now login.", style={"color": "green"}), '/login'
+                    else:
+                        return html.Div("An error occurred during registration. Please try again.", style={"color": "red"}), None
+                
+                except Exception as e:
+                    # Handle any exceptions that occur during the insert operation
+                    print("Error occurred during insert:", e)
+                    return html.Div("An unexpected error occurred during registration. Please try again.", style={"color": "red"}), None
+                
+
+
+                return html.Div("Registration successful! You can now login.", style={"color": "green"}), None
             else:
-                return html.Div("Please enter a username and password.", style={"color": "red"})
-        return ""
+                return html.Div("Please enter a username and password.", style={"color": "red"}), None
+        return "", None

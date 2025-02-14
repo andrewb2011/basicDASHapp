@@ -18,6 +18,7 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 # Define the app layout with dcc.Location and a container for the page content
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),  # Tracks the URL
+    dcc.Location(id='redirect-to-login', refresh=True),
     dcc.Store(id='login-state', data={'is_logged_in': False}),  # Store login state
     sidebar(),
     #navbar(),
