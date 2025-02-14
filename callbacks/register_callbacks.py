@@ -1,4 +1,5 @@
-from dash import Input, Output, State, html
+from dash import Input, Output, State, html, dcc
+from database import supabase
 
 def register_register_callbacks(app):
     @app.callback(
@@ -9,7 +10,7 @@ def register_register_callbacks(app):
     )
     def handle_registration(n_clicks, username, password):
         if n_clicks > 0:
-            if username and password:  # Simple validation
+            if username and password:  
                 return html.Div("Registration successful! You can now login.", style={"color": "green"})
             else:
                 return html.Div("Please enter a username and password.", style={"color": "red"})

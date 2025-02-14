@@ -22,4 +22,4 @@ login_layout = dbc.Container([
             ]),
         ], className="shadow p-3 mb-5 bg-white rounded", style={"maxWidth": "400px", "margin": "auto"}),
     )),
-], fluid=True)
+], fluid=True, className="d-flex flex-column justify-content-start align-items-center vh-100 mt-5")
