@@ -32,9 +32,11 @@ register_dashboard_callbacks(app)
 # Callback to update the page content based on the URL
 @app.callback(
     Output('page-content', 'children'),
-    Input('url', 'pathname')
+    Input('url', 'pathname'),
+    State('login-state', 'data'),
+    allow_duplicates = True
 )
-def display_page(pathname):
+def display_page(pathname, login_state):
     if pathname == '/':
         return homepage_layout
     elif pathname == '/login':
@@ -42,7 +44,14 @@ def display_page(pathname):
     elif pathname == '/register':
         return register_layout
     elif pathname == '/dashboard':
-        return dashboard_layout
+        if login_state and login_state.get('is_logged_in'):
+            return dashboard_layout
+        else:
+            return dbc.Container([
+                dbc.Row(dbc.Col(html.H1("Access Denied", className="text-center mt-4"))),
+                dbc.Row(dbc.Col(html.P("You must be logged in to view this page.", className="text-center"))),
+                dcc.Link('Go to Login Page', href='/login', className="btn btn-link d-block text-center"),
+            ], fluid=True)
     else:
         return dbc.Container([
             dbc.Row(dbc.Col(html.H1("404: Page Not Found", className="text-center mt-4"))),

@@ -30,6 +30,7 @@ def register_login_callbacks(app):
         try:
             response = supabase.table("test_user").select("*").eq("username", username).eq("password", password).execute()
 
+            print("Supabase response data:", response.data)
             # Check if user exists
             if response.data and len(response.data) > 0:
                 login_state['is_logged_in'] = True  # Update login state

@@ -17,6 +17,11 @@ def sidebar():
                 pills=True,
                 style={"marginTop": "20px"},
             ),
+
+            html.Div(
+                dbc.Button("Logout", id="logout-button", color="danger", style={"width": "100%", "display": "none"}),
+                style={"marginTop": "auto", "padding": "20px"},
+            ),
         ],
         style={
             "position": "fixed",
@@ -26,5 +31,7 @@ def sidebar():
             "width": "25%",
             "padding": "20px",
             "backgroundColor": "blue",
+            "display": "flex",
+            "flexDirection": "column",
         },
     )
