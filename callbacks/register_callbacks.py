@@ -22,13 +22,21 @@ def register_register_callbacks(app):
 
                 try:
                     insert_response = supabase.table("test_user").insert({"username": username, "password": password}).execute()
+                    print(insert_response)
+                    print("User registered Sucessfully")
+                    
+                     #Redirect to login page after successful registration
+                    return html.Div("Registration successful! You can now login.", style={"color": "green"}), '/login'
+                    
+
                     # Check if insertion was successful
-                    if insert_response.status_code == 201:  # 201 is for successful creation
-                        print("Supabase response data:", insert_response.data)
-                        # Redirect to login page after successful registration
-                        return html.Div("Registration successful! You can now login.", style={"color": "green"}), '/login'
-                    else:
-                        return html.Div("An error occurred during registration. Please try again.", style={"color": "red"}), None
+                    # if insert_response. == 200:  # 201 is for successful creation
+                    #     print("Supabase response data:", insert_response.data)
+                    #     # Redirect to login page after successful registration
+                    #     return html.Div("Registration successful! You can now login.", style={"color": "green"}), '/login'
+                    # else:
+                    #     print("Supabase response data:", insert_response.data)
+                    #     return html.Div("An error occurred during registration. Please try again.", style={"color": "red"}), None
                 
                 except Exception as e:
                     # Handle any exceptions that occur during the insert operation
