@@ -9,6 +9,7 @@ from callbacks.register_callbacks import register_register_callbacks
 from callbacks.dashboard_callbacks import register_dashboard_callbacks
 from components.navbar import navbar
 from components.sidebar import sidebar
+from database import supabase
 
 
 # Initialize the Dash app
@@ -18,7 +19,8 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 # Define the app layout with dcc.Location and a container for the page content
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),  # Tracks the URL
-    dcc.Store(id='login-state', data={'is_logged_in': False}),  # Store login state
+    dcc.Location(id='redirect-to-login', refresh=True),
+    dcc.Store(id='login-state', data={'is_logged_in': False}, storage_type='session'),  # Store login state
     sidebar(),
     #navbar(),
     html.Div(id='page-content')  # Container for the page content
@@ -29,12 +31,20 @@ register_login_callbacks(app)
 register_register_callbacks(app)
 register_dashboard_callbacks(app)
 
+
+### this here is different, delete if doesnt work
+
+###
+
+
 # Callback to update the page content based on the URL
 @app.callback(
     Output('page-content', 'children'),
-    Input('url', 'pathname')
+    Input('url', 'pathname'),
+    State('login-state', 'data'),
+    allow_duplicates = True
 )
-def display_page(pathname):
+def display_page(pathname, login_state):
     if pathname == '/':
         return homepage_layout
     elif pathname == '/login':
@@ -42,7 +52,14 @@ def display_page(pathname):
     elif pathname == '/register':
         return register_layout
     elif pathname == '/dashboard':
-        return dashboard_layout
+        if login_state and login_state.get('is_logged_in'):
+            return dashboard_layout
+        else:
+            return dbc.Container([
+                dbc.Row(dbc.Col(html.H1("Access Denied", className="text-center mt-4"))),
+                dbc.Row(dbc.Col(html.P("You must be logged in to view this page.", className="text-center"))),
+                dcc.Link('Go to Login Page', href='/login', className="btn btn-link d-block text-center"),
+            ], fluid=True)
     else:
         return dbc.Container([
             dbc.Row(dbc.Col(html.H1("404: Page Not Found", className="text-center mt-4"))),
